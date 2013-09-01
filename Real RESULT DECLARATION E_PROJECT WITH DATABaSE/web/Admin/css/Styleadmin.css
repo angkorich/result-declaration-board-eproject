@@ -1,0 +1,150 @@
+body
+{
+        margin:0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	text-align:center;	
+	background:url(../image/nen.gif);
+}
+#main
+{
+width:900px;
+color:#f1fcff;
+margin:0 0 0 0;
+background-color:#241f1f;
+background:url(../image/bg_brown.gif);
+border-left:#666 solid 0px;
+border-right:#666 solid 0px;
+border-top:#666 solid 0px;
+border-bottom:#666 solid 0px;
+text-align:center;
+color:Black;
+
+
+}
+#banner
+{
+background:red;
+background:url(../image/project_02.gif);
+height:157px;
+border-bottom:#444 solid 0px;
+}
+#menu_horizontal
+{
+	width:900px;
+	border-bottom:#444 solid 0px;
+	text-align:right;
+	font-size:14;
+
+	}
+	#Menu_Login
+{
+	width:800px;
+	border-bottom:#444 solid 0px;
+	text-align:center;
+	font-size:14;
+
+	}
+	
+#mleft
+{
+float:left;
+display:inline;
+width:210px;
+margin-left:3px;
+font-family:Tahoma;
+font-size:14px;
+margin:4 0 0 2;
+
+}
+#buttonhome
+{
+    background:url(../image/Admin2_07.gif);
+    
+    height:55px;
+}
+#button_user
+{
+    background:url(../image/Admin2_10.gif);
+
+    height:56px;
+}
+#line_img
+{
+    background:url(../image/Admin2_09.gif);
+    height:3px;
+}
+#button_Student
+{
+    background:url(../image/Admin2_12.gif);
+
+    height:56px;
+}
+#button_curlli
+{
+    background:url(../image/Admin2_15.gif);
+ 
+    height:56px;
+}
+#button_semter
+{
+    background:url(../image/Admin2_18.gif);
+
+    height:56px;
+}
+#button_subject
+{
+    background:url(../image/Admin2_20.gif);
+
+    height:56px;
+}
+#button_exam
+{
+    background:url(../image/Admin2_23.jpg);
+
+    height:56px;
+}
+#button_schedule
+{
+    background:url(../image/Admin2_25.gif);
+
+    height:56px;
+}
+#button_reigs
+{
+    background:url(../image/Admin2_27.gif);
+
+    height:56px;
+}
+#button_nen
+{
+    background:url(../image/admin_24.gif);
+
+    height:80px;
+}
+#content
+{
+border-right:#444 solid 0px;
+border-left:#444 solid 0px;
+border-top:#4444 solid 0px;
+border-bottom:#444 solid 0px;
+width:685px;
+text-align:left;
+float:right;
+/*display:inline-block;
+width:900px;
+float:right;
+font-family:Tahoma;
+font-size:13px;
+margin-top:0px;
+margin-right:0px;
+text-align:left;*/
+}
+#footer
+{
+width:900px;
+margin:0 0 0 0;
+/*border-top:outset;*/
+display:inline-block;
+border-bottom:#444 solid 0px;
+text-align:right;
+}

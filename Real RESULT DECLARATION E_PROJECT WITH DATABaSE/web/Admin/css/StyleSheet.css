@@ -1,0 +1,121 @@
+body
+{
+        margin:0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	text-align:center;	
+	background:url(../image/nen.gif);
+}
+#main
+{
+width:900px;
+color:#f1fcff;
+margin:0 0 0 0;
+background-color:#241f1f;
+background:url(../image/bg_brown.gif);
+border-left:#666 solid 0px;
+border-right:#666 solid 0px;
+border-top:#666 solid 0px;
+border-bottom:#666 solid 0px;
+text-align:center;
+color:Black;
+
+
+}
+#banner
+{
+background:red;
+background:url(../image/project_02.gif);
+height:157px;
+border-bottom:#444 solid 0px;
+}
+#menu_horizontal
+{
+	width:900px;
+	border-bottom:#444 solid 0px;
+	text-align:right;
+	font-size:14;
+
+	}
+	#Menu_Login
+{
+	width:800px;
+	border-bottom:#444 solid 0px;
+	text-align:center;
+	font-size:14;
+
+	}
+	
+#mleft
+{
+float:left;
+display:inline;
+width:200px;
+margin-left:3px;
+font-family:Tahoma;
+font-size:14px;
+margin:4 0 0 2;
+
+}
+#buttonhome
+{
+    background:url(../image/project_05.gif);
+    width:200px;
+    height:63px;
+}
+#buttonabout
+{
+    background:url(../image/project_08.gif);
+width:200px;
+    height:69px;
+}
+#buttonresult
+{
+    background:url(../image/project_10.gif);
+width:200px;
+    height:72px;
+}
+#buttoncontact
+{
+    background:url(../image/project_11.gif);
+width:200px;
+    height:67px;
+}
+#buttonnotifa
+{
+    background:url(../image/project_12.gif);
+width:200px;
+    height:72px;
+}
+#nen
+{
+    background:url(../image/project_13.gif);
+width:200px;
+    height:191px;
+}
+#content
+{
+border-right:#444 solid 0px;
+border-left:#444 solid 0px;
+border-top:#4444 solid 0px;
+border-bottom:#444 solid 0px;
+width:695px;
+text-align:left;
+float:right;
+/*display:inline-block;
+width:900px;
+float:right;
+font-family:Tahoma;
+font-size:13px;
+margin-top:0px;
+margin-right:0px;
+text-align:left;*/
+}
+#footer
+{
+width:900px;
+margin:0 0 0 0;
+/*border-top:outset;*/
+display:inline-block;
+border-bottom:#444 solid 0px;
+text-align:right;
+}

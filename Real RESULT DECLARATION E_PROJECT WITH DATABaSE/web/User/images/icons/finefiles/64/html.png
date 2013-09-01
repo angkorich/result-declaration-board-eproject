@@ -1,0 +1,291 @@
+d(function(se, o) {
+					var nl, x, a = ['ol', 'ul'], i, n, p, r = /^(OL|UL)$/, np;
+
+					function prevNode(e, n) {
+						var a = n.split(','), i;
+
+						while ((e = e.previousSibling) != null) {
+							for (i=0; i<a.length; i++) {
+								if (e.nodeName == a[i])
+									return e;
+							}
+						}
+
+						return null;
+					};
+
+					for (x=0; x<a.length; x++) {
+						nl = t.dom.select(a[x], o.node);
+
+						for (i=0; i<nl.length; i++) {
+							n = nl[i];
+							p = n.parentNode;
+
+							if (r.test(p.nodeName)) {
+								np = prevNode(n, 'LI');
+
+								if (!np) {
+									np = t.dom.create('li');
+									np.innerHTML = '&nbsp;';
+									np.appendChild(n);
+									p.insertBefore(np, p.firstChild);
+								} else
+									np.appendChild(n);
+							}
+						}
+					}
+				});
+			}
+
+			if (s.fix_table_elements) {
+				t.onPreProcess.add(function(se, o) {
+					each(t.dom.select('p table', o.node), function(n) {
+						// IE has a odd bug where tables inside paragraphs sometimes gets wrapped in a BODY and documentFragement element
+						// This hack seems to resolve that issue. This will normally not happed since your contents should be valid in the first place
+						if (isIE)
+							n.outerHTML = n.outerHTML;
+
+						t.dom.split(t.dom.getParent(n, 'p'), n);
+					});
+				});
+			}
+		},
+
+		setEntities : function(s) {
+			var t = this, a, i, l = {}, re = '', v;
+
+			// No need to setup more than once
+			if (t.entityLookup)
+				return;
+
+			// Build regex and lookup array
+			a = s.split(',');
+			for (i = 0; i < a.length; i += 2) {
+				v = a[i];
+
+				// Don't add default &amp; &quot; etc.
+				if (v == 34 || v == 38 || v == 60 || v == 62)
+					continue;
+
+				l[String.fromCharCode(a[i])] = a[i + 1];
+
+				v = parseInt(a[i]).toString(16);
+				re += '\\u' + '0000'.substring(v.length) + v;
+			}
+
+			if (!re) {
+				t.settings.entity_encoding = 'raw';
+				return;
+			}
+
+			t.entitiesRE = new RegExp('[' + re + ']', 'g');
+			t.entityLookup = l;
+		},
+
+		setValidChildRules : function(s) {
+			this.childRules = null;
+			this.addValidChildRules(s);
+		},
+
+		addValidChildRules : function(s) {
+			var t = this, inst, intr, bloc;
+
+			if (!s)
+				return;
+
+			inst = 'A|BR|SPAN|BDO|MAP|OBJECT|IMG|TT|I|B|BIG|SMALL|EM|STRONG|DFN|CODE|Q|SAMP|KBD|VAR|CITE|ABBR|ACRONYM|SUB|SUP|#text|#comment';
+			intr = 'A|BR|SPAN|BDO|OBJECT|APPLET|IMG|MAP|IFRAME|TT|I|B|U|S|STRIKE|BIG|SMALL|FONT|BASEFONT|EM|STRONG|DFN|CODE|Q|SAMP|KBD|VAR|CITE|ABBR|ACRONYM|SUB|SUP|INPUT|SELECT|TEXTAREA|LABEL|BUTTON|#text|#comment';
+			bloc = 'H[1-6]|P|DIV|ADDRESS|PRE|FORM|TABLE|LI|OL|UL|TD|CAPTION|BLOCKQUOTE|CENTER|DL|DT|DD|DIR|FIELDSET|FORM|NOSCRIPT|NOFRAMES|MENU|ISINDEX|SAMP';
+
+			each(s.split(','), function(s) {
+				var p = s.split(/\[|\]/), re;
+
+				s = '';
+				each(p[1].split('|'), function(v) {
+					if (s)
+						s += '|';
+
+					switch (v) {
+						case '%itrans':
+							v = intr;
+							break;
+
+						case '%itrans_na':
+							v = intr.substring(2);
+							break;
+
+						case '%istrict':
+							v = inst;
+							break;
+
+						case '%istrict_na':
+							v = inst.substring(2);
+							break;
+
+						case '%btrans':
+							v = bloc;
+							break;
+
+						case '%bstrict':
+							v = bloc;
+							break;
+					}
+
+					s += v;
+				});
+				re = new RegExp('^(' + s.toLowerCase() + ')$', 'i');
+
+				each(p[0].split('/'), function(s) {
+					t.childRules = t.childRules || {};
+					t.childRules[s] = re;
+				});
+			});
+
+			// Build regex
+			s = '';
+			each(t.childRules, function(v, k) {
+				if (s)
+					s += '|';
+
+				s += k;
+			});
+
+			t.parentElementsRE = new RegExp('^(' + s.toLowerCase() + ')$', 'i');
+
+			/*console.debug(t.parentElementsRE.toString());
+			each(t.childRules, function(v) {
+				console.debug(v.toString());
+			});*/
+		},
+
+		setRules : function(s) {
+			var t = this;
+
+			t._setup();
+			t.rules = {};
+			t.wildRules = [];
+			t.validElements = {};
+
+			return t.addRules(s);
+		},
+
+		addRules : function(s) {
+			var t = this, dr;
+
+			if (!s)
+				return;
+
+			t._setup();
+
+			each(s.split(','), function(s) {
+				var p = s.split(/\[|\]/), tn = p[0].split('/'), ra, at, wat, va = [];
+
+				// Extend with default rules
+				if (dr)
+					at = tinymce.extend([], dr.attribs);
+
+				// Parse attributes
+				if (p.length > 1) {
+					each(p[1].split('|'), function(s) {
+						var ar = {}, i;
+
+						at = at || [];
+
+						// Parse attribute rule
+						s = s.replace(/::/g, '~');
+						s = /^([!\-])?([\w*.?~_\-]+|)([=:<])?(.+)?$/.exec(s);
+						s[2] = s[2].replace(/~/g, ':');
+
+						// Add required attributes
+						if (s[1] == '!') {
+							ra = ra || [];
+							ra.push(s[2]);
+						}
+
+						// Remove inherited attributes
+						if (s[1] == '-') {
+							for (i = 0; i <at.length; i++) {
+								if (at[i].name == s[2]) {
+									at.splice(i, 1);
+									return;
+								}
+							}
+						}
+
+						switch (s[3]) {
+							// Add default attrib values
+							case '=':
+								ar.defaultVal = s[4] || '';
+								break;
+
+							// Add forced attrib values
+							case ':':
+								ar.forcedVal = s[4];
+								break;
+
+							// Add validation values
+							case '<':
+								ar.validVals = s[4].split('?');
+								break;
+						}
+
+						if (/[*.?]/.test(s[2])) {
+							wat = wat || [];
+							ar.nameRE = new RegExp('^' + wildcardToRE(s[2]) + '$');
+							wat.push(ar);
+						} else {
+							ar.name = s[2];
+							at.push(ar);
+						}
+
+						va.push(s[2]);
+					});
+				}
+
+				// Handle element names
+				each(tn, function(s, i) {
+					var pr = s.charAt(0), x = 1, ru = {};
+
+					// Extend with default rule data
+					if (dr) {
+						if (dr.noEmpty)
+							ru.noEmpty = dr.noEmpty;
+
+						if (dr.fullEnd)
+							ru.fullEnd = dr.fullEnd;
+
+						if (dr.padd)
+							ru.padd = dr.padd;
+					}
+
+					// Handle prefixes
+					switch (pr) {
+						case '-':
+							ru.noEmpty = true;
+							break;
+
+						case '+':
+							ru.fullEnd = true;
+							break;
+
+						case '#':
+							ru.padd = true;
+							break;
+
+						default:
+							x = 0;
+					}
+
+					tn[i] = s = s.substring(x);
+					t.validElements[s] = 1;
+
+					// Add element name or element regex
+					if (/[*.?]/.test(tn[0])) {
+						ru.nameRE = new RegExp('^' + wildcardToRE(tn[0]) + '$');
+						t.wildRules = t.wildRules || {};
+						t.wildRules.push(ru);
+					} else {
+						ru.name = tn[0];
+
+						// Store away default rule
+						if (tn[0] == '@')
